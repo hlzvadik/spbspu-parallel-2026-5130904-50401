@@ -205,7 +205,6 @@ std::pair< double, double > goltsov::areas(const std::vector< std::tuple< double
   size_t count_inside_in_all = 0;
 
   for (size_t i = 0; i < threads; ++i)
-  
   {
     const std::pair< size_t, size_t > result_i = results_in_threads[i].get();
     count_inside += result_i.first;
