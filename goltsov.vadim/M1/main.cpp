@@ -127,7 +127,7 @@ std::pair< size_t, size_t > goltsov::calc(const std::vector< std::tuple< double,
 
 std::pair< double, double > goltsov::areas(const std::vector< std::tuple< double, double, double > >& data, const size_t& threads, const size_t& tries,
   const size_t& start_seed, const double& minX, const double& minY, const double& maxX, const double& maxY) {
-  std::vector< std::future< std::pair< size_t, size_t > > > results_in_threads = std::vector< std::future< size_t > >(threads);
+  std::vector< std::future< std::pair< size_t, size_t > > > results_in_threads = std::vector< std::future< std::pair< size_t, size_t > > >(threads);
   for (int i = 0; i < tries % threads; ++i) {
     results_in_threads[i] = std::async(std::launch::async, calc, data, tries / threads + 1, start_seed + i, minX, minY, maxX, maxY);
   }
@@ -136,7 +136,7 @@ std::pair< double, double > goltsov::areas(const std::vector< std::tuple< double
   }
   size_t count_inside = 0;
   size_t count_inside_in_all = 0;
-  for (int i = 0; i < tries; ++i) {
+  for (int i = 0; i < threads; ++i) {
     std::pair< size_t, size_t > result_i = results_in_threads[i].get();
     count_inside += result_i.first;
     count_inside_in_all += result_i.second;
