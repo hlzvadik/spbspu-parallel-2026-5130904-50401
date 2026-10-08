@@ -30,13 +30,25 @@ int main(int argc, char** argv) {
     std::cerr << "Invalid threads argument. Threads must be a not negative number\n";
     return 1;
   }
-  const size_t threads = std::stoull(argv[1]);
+  size_t threads;
+  try {
+    threads = std::stoull(argv[1]);
+  } catch (std::invalid_argument& e) {
+    std::cerr << e.what();
+    return 2;
+  }
 
   if (argv[2][0] == '-') {
     std::cerr << "Invalid tries argument. Tries must be a positive number\n";
     return 1;
   }
-  const size_t tries = std::stoull(argv[2]);
+  size_t tries;
+  try {
+    tries = std::stoull(argv[2]);
+  } catch (std::invalid_argument& e) {
+    std::cerr << e.what();
+    return 2;
+  }
   if (tries == 0) {
     std::cerr << "Invalid tries argument. Tries must be a positive number\n";
     return 1;
@@ -48,7 +60,12 @@ int main(int argc, char** argv) {
       std::cerr << "Invalid seed argument. Seed must be a positive number\n";
       return 1;
     }
-    seed = std::stoull(argv[3]);
+    try {
+      seed = std::stoull(argv[3]);
+    } catch (std::invalid_argument& e) {
+      std::cerr << e.what();
+      return 2;
+    }
   }
 
   double min_x = std::numeric_limits<double>::max();
@@ -88,7 +105,7 @@ int main(int argc, char** argv) {
     data.push_back(std::tuple<double, double, double>(r, x, y));
   }
 
-  const std::pair<double, double> areas = goltsov::areas(data, threads, tries, seed, min_x, min_y, max_x, max_y);
+  const std::pair<double, double> areas = goltsov::areas(data, threads != 0 ? threads : 1, tries, seed, min_x, min_y, max_x, max_y);
   std::cout << areas.first << " " << areas.second << "\n";
 }
 
@@ -114,7 +131,7 @@ std::pair<size_t, size_t> goltsov::calc(const std::vector<std::tuple<double, dou
     const double y = dist_y(engine);
     bool is_inside = false;
     bool is_inside_in_all = true;
-  
+
     for (size_t j = 0; j < data.size(); ++j) {
       if (isInside(data[j], x, y)) {
         is_inside = true;
@@ -122,7 +139,7 @@ std::pair<size_t, size_t> goltsov::calc(const std::vector<std::tuple<double, dou
         is_inside_in_all = false;
       }
     }
-  
+
     if (is_inside) {
       count_inside++;
     }
