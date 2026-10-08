@@ -13,13 +13,12 @@ namespace goltsov
 {
   bool isInside(const std::tuple< double, double, double >& s, const double& x, const double& y);
 
-  std::pair< size_t, size_t > calc(const std::vector< std::tuple< double, double, double > >& data,
-    const size_t& tests, const size_t& seed, const double& min_x, const double& min_y, const double& max_x,
-    const double& max_y);
+  std::pair< size_t, size_t > calc(const std::vector< std::tuple< double, double, double > >& data, const size_t& tests,
+      const size_t& seed, const double& min_x, const double& min_y, const double& max_x, const double& max_y);
 
   std::pair< double, double > areas(const std::vector< std::tuple< double, double, double > >& data,
-    const size_t& threads, const size_t& tries, const size_t& start_seed, const double& min_x, const double& min_y,
-    const double& max_x, const double& max_y);
+      const size_t& threads, const size_t& tries, const size_t& start_seed, const double& min_x, const double& min_y,
+      const double& max_x, const double& max_y);
 }
 
 int main(int argc, char** argv)
@@ -35,7 +34,7 @@ int main(int argc, char** argv)
     std::cerr << "Invalid threads argument. Threads must be a not negative number\n";
     return 1;
   }
-  size_t threads;
+  size_t threads = 0;
   try
   {
     threads = std::stoull(argv[1]);
@@ -51,7 +50,7 @@ int main(int argc, char** argv)
     std::cerr << "Invalid tries argument. Tries must be a positive number\n";
     return 1;
   }
-  size_t tries;
+  size_t tries = 0;
   try
   {
     tries = std::stoull(argv[2]);
@@ -129,8 +128,8 @@ int main(int argc, char** argv)
     data.push_back(std::tuple< double, double, double >(r, x, y));
   }
 
-  const std::pair< double, double > areas = goltsov::areas(data, threads != 0 ? threads : 1, tries, seed, min_x,
-    min_y, max_x, max_y);
+  const std::pair< double, double > areas
+      = goltsov::areas(data, threads != 0 ? threads : 1, tries, seed, min_x, min_y, max_x, max_y);
   std::cout << areas.first << " " << areas.second << "\n";
 }
 
@@ -143,8 +142,8 @@ bool goltsov::isInside(const std::tuple< double, double, double >& s, const doub
 }
 
 std::pair< size_t, size_t > goltsov::calc(const std::vector< std::tuple< double, double, double > >& data,
-  const size_t& tests, const size_t& seed, const double& min_x, const double& min_y, const double& max_x,
-  const double& max_y)
+    const size_t& tests, const size_t& seed, const double& min_x, const double& min_y, const double& max_x,
+    const double& max_y)
 {
   std::default_random_engine engine(seed);
   std::uniform_real_distribution< double > dist_x(min_x, max_x);
@@ -185,20 +184,20 @@ std::pair< size_t, size_t > goltsov::calc(const std::vector< std::tuple< double,
 }
 
 std::pair< double, double > goltsov::areas(const std::vector< std::tuple< double, double, double > >& data,
-  const size_t& threads, const size_t& tries, const size_t& start_seed, const double& min_x, const double& min_y,
-  const double& max_x, const double& max_y)
+    const size_t& threads, const size_t& tries, const size_t& start_seed, const double& min_x, const double& min_y,
+    const double& max_x, const double& max_y)
 {
   std::vector< std::future< std::pair< size_t, size_t > > > results_in_threads(threads);
 
   for (size_t i = 0; i < tries % threads; ++i)
   {
-    results_in_threads[i] = std::async(std::launch::async, calc, data, tries / threads + 1, start_seed + i,
-      min_x, min_y, max_x, max_y);
+    results_in_threads[i]
+        = std::async(std::launch::async, calc, data, tries / threads + 1, start_seed + i, min_x, min_y, max_x, max_y);
   }
   for (size_t i = tries % threads; i < threads; ++i)
   {
-    results_in_threads[i] = std::async(std::launch::async, calc, data, tries / threads, start_seed + i,
-      min_x, min_y, max_x, max_y);
+    results_in_threads[i]
+        = std::async(std::launch::async, calc, data, tries / threads, start_seed + i, min_x, min_y, max_x, max_y);
   }
 
   size_t count_inside = 0;
@@ -212,7 +211,6 @@ std::pair< double, double > goltsov::areas(const std::vector< std::tuple< double
   }
 
   return std::pair< double, double >(
-    (max_x - min_x) * (max_y - min_y) * (static_cast< double >(count_inside) / static_cast< double >(tries)),
-    (max_x - min_x) * (max_y - min_y) * (static_cast< double >(count_inside_in_all) / static_cast< double >(tries))
-  );
+      (max_x - min_x) * (max_y - min_y) * (static_cast< double >(count_inside) / static_cast< double >(tries)),
+      (max_x - min_x) * (max_y - min_y) * (static_cast< double >(count_inside_in_all) / static_cast< double >(tries)));
 }
