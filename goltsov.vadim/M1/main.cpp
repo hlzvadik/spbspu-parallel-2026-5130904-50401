@@ -8,6 +8,7 @@
 #include <string>
 #include <limits>
 #include <algorithm>
+#include <stdexcept>
 
 namespace goltsov
 {
