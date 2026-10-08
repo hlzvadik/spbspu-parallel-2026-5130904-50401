@@ -106,12 +106,12 @@ std::pair< size_t, size_t > goltsov::calc(const std::vector< std::tuple< double,
   std::uniform_real_distribution< double > distY(minY, maxY);
   size_t count_inside = 0;
   size_t count_inside_in_all = 0;
-  for (int i = 0; i < tests; ++i) {
+  for (size_t i = 0; i < tests; ++i) {
     double x = distX(engine);
     double y = distY(engine);
     bool is_inside = false;
     bool is_inside_in_all = true;
-    for (int j = 0; j < data.size(); ++j) {
+    for (size_t j = 0; j < data.size(); ++j) {
       if (isInside(data[j], x, y)) {
         is_inside = true;
       } else {
@@ -133,17 +133,17 @@ std::pair< double, double > goltsov::areas(const std::vector< std::tuple< double
   const double& maxX, const double& maxY) {
   std::vector< std::future< std::pair< size_t, size_t > > > results_in_threads =
     std::vector< std::future< std::pair< size_t, size_t > > >(threads);
-  for (int i = 0; i < tries % threads; ++i) {
+  for (size_t i = 0; i < tries % threads; ++i) {
     results_in_threads[i] = std::async(std::launch::async, calc, data, tries / threads + 1, start_seed + i, minX,
       minY, maxX, maxY);
   }
-  for (int i = tries % threads; i < threads; ++i) {
+  for (size_t i = tries % threads; i < threads; ++i) {
     results_in_threads[i] = std::async(std::launch::async, calc, data, tries / threads, start_seed + i, minX, minY,
       maxX, maxY);
   }
   size_t count_inside = 0;
   size_t count_inside_in_all = 0;
-  for (int i = 0; i < threads; ++i) {
+  for (size_t i = 0; i < threads; ++i) {
     std::pair< size_t, size_t > result_i = results_in_threads[i].get();
     count_inside += result_i.first;
     count_inside_in_all += result_i.second;
