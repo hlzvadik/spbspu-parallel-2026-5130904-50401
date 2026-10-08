@@ -1,2 +1,5 @@
+#include <iostream>
 
-int main() {}
+int main() {
+  std::cout << "goltsov.vadim\n";
+}
