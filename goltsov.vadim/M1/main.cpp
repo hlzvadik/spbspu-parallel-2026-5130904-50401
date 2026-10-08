@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <tuple>
 
 int main(int argc, char** argv) {
 
@@ -27,4 +29,26 @@ int main(int argc, char** argv) {
     }
     seed = std::stoull(argv[2]);
   }
+
+  std::vector< std::tuple< long long, long long, long long > > data;
+  while (!std::cin.eof()) {
+    long long r;
+    if (!(std::cin >> r)) {
+      std::cerr << "Invalid data";
+      return 1;
+    }
+    long long x;
+    if (!(std::cin >> x)) {
+      std::cerr << "Invalid data";
+      return 1;
+    }
+    long long y;
+    if (!(std::cin >> y)) {
+      std::cerr << "Invalid data";
+      return 1;
+    }
+    data.push_back(std::tuple< long, long, long >(r, x, y));
+  }
+
+  
 }
